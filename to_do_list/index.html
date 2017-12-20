@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="../build/react.js"></script>
+    <script src="../build/react-dom.js"></script>
+    <script src="../build/browser.min.js"></script>
+</head>
+
+<body>
+    <div id="example"></div>
+    <script type="text/babel">
+        var TodoList = React.createClass({
+        getInitialState: function() {
+            return {
+                todolist: []
+            };
+        },
+        //接受一个传入的数据，并将它实时更新到组件的state中
+        handleChange: function (rows) {
+            this.setState({todolist: rows});
+        },
+      
+        render: function() {
+            return ( <div>
+                <TypeNew  onAdd={this.handleChange} todo={this.state.todolist}/ >
+                <ListTodo onDel={this.handleChange} todo={this.state.todolist}/ >
+                </div>
+            )
+        }
+        });
+        var TypeNew = React.createClass({
+            handleAdd: function (e) {
+                e.preventDefault();
+                var inputDom = this.refs.inputnew;
+                var newValue = inputDom.value.trim();
+                //获取传入的todolist数据
+                var rows = this.props.todo;
+                if(newValue != '') {
+                    rows.push(newValue);
+                    this.props.onAdd(rows);
+                }
+                inputDom.value = '';
+                                                                          
+            },
+            render: function() {
+                return ( <form onSubmit = {this.handleAdd}>
+                    <input type = "text" ref="inputnew" placeholder = "typing a newthing todo" / >
+                    <input type="submit"/>
+                    </form>
+                )
+            }
+        });
+        var ListTodo = React.createClass({
+            handleDelete: function (e) {
+                e.preventDefault();
+                var i = e.target.getAttribute('data-key');
+                console.log(i+'33333333333')
+                this.props.todo.splice(i,1);
+                this.props.onDel(this.props.todo);
+            },
+            render: function() {
+                return (<ul id = "tido-list" >
+                    {
+                        this.props.todo.map(function(item, i) {
+                            return (
+                                <li>
+                                    <label>{item}</label>
+                                    <button onClick={this.handleDelete} data-key={i}>delete</button>
+                                </li>
+                            )
+                        }.bind(this))//需要手动绑定this
+                    }
+                    </ul>
+                )
+            }
+        });
+        ReactDOM.render(
+        <TodoList / > ,
+        document.getElementById('example')
+        );
+    </script>
+</body>
+
+</html>
